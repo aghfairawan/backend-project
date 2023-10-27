@@ -16,7 +16,7 @@ const app = express()
 app.use(express.json())
 app.use(helmet());
 
-const allowedOrigins = ['https://aghfa-project.web.app'];
+const allowedOrigins = ['https://aghfa-project-fullstack.firebaseapp.com'];
 
 
 const corsOptions = {
