@@ -16,7 +16,7 @@ const app = express()
 app.use(express.json())
 app.use(helmet());
 
-const allowedOrigins = ['http://localhost:5173'];
+const allowedOrigins = ['https://aghfa-project.web.app'];
 
 
 const corsOptions = {
