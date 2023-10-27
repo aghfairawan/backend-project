@@ -5,7 +5,7 @@ const databaseMidleware = require('./midleware/database-midleware.js');
 const authRouter = require('./routes/auth-route.js')
 const taskRouter = require('./routes/task-route.js')
 const authMiddleware = require('./midleware/authentication-midlware.js')
-const helmet = require("helmet");
+
 
 
 
@@ -13,7 +13,7 @@ const helmet = require("helmet");
 const app = express()
 
 app.use(express.json())
-app.use(helmet());
+
 
 
 
