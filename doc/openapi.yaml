@@ -1,0 +1,188 @@
+openapi: 3.0.0
+info:
+  title: Mini Personal Project
+  version: 1.0.0
+  description: Assignment week 11 with RBAC token-based auth
+servers:
+  - url: http://localhost:8000 
+    description: Development server
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer with JWT Token
+  schemas:
+    Book:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "64f157db18dfa4960616f36f"
+        title:
+          type: string
+          example: "buku bukuan"
+        author:
+          type: string
+          example: "si ujang lagi"
+        status:
+          type: string
+          example: "available"
+    RegisterUser:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+      required:
+        - username
+        - password
+    LoginUser:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+paths:
+  /auth/register:
+    post:
+      summary: Register new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUser'
+      responses:
+        '200':
+          description: User Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      username:
+                        type: string
+                      role:
+                        type: string
+        '500':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /auth/login:
+    post:
+      summary: User login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUser'
+      responses:
+        '200':
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  token:
+                    type: string
+        '401':
+          description: Unauthorized
+        '500':
+          description: Server error
+
+  /books:
+    get:
+      security:
+        - bearer: []
+      summary: 'Get all books'
+      responses:
+        '200':
+          description: 'Get all books'
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/Book'
+        '500':
+          description: server error
+      
+
+  /books/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          
+        description: The ID of the book to be retrieved, updated, or deleted
+    get:
+      summary: Get a book by ID
+      responses:
+        '200':
+          description: The book
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: Book not found
+        '500':
+          description: Server error
+    put:
+      summary: Update a book by ID (Admin only)
+      security:
+        - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        '200':
+          description: Book updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        '403':
+          description: Forbidden (User is not an admin)
+        '404':
+          description: Book not found
+        '500':
+          description: Server error
+    delete:
+      summary: Delete a book by ID (Admin only)
+      security:
+        - bearer: []
+      responses:
+        '204':
+          description: Book deleted successfully
+        '403':
+          description: Forbidden (User is not an admin)
+        '404':
+          description: Book not found
+        '500':
+          description: Server error
